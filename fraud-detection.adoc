@@ -4,7 +4,7 @@ Fraud is a burgeoning problem that costs businesses billions of dollars in lost 
 
 With Neo4j, you can use a flexible, native graph database plus algorithms to build applications for uncovering and investigating complex fraud, helping identify suspicious activity quickly and accurately to increase uplift in scoring models. Rapidly match complex patterns in data and relationships, expose paths and intermediaries to fraudulent actors using advanced algorithms, and find duplicate and suspicious profiles using entity resolution.
 
-image::fraud-detection-overview.jpg[]
+image::https://raw.githubusercontent.com/neo4j-product-examples/sample-applications/refs/heads/main/assets/fraud-detection-overview.jpg[]
 
 == Graph model
 
@@ -15,7 +15,7 @@ The graph model contains the following:
 * *Transaction* - are between two accounts, at least one of which must be internal (after all, we have no visibility into transactions between accounts at other institutions unless one side of the transaction is at our institution).
 * *Email, PhoneNumber, Address* - these nodes store demographic information for Customers
 
-image::fraud-detection-graph-model.png[]
+image::https://raw.githubusercontent.com/neo4j-product-examples/sample-applications/refs/heads/main/assets/fraud-detection-graph-model.png[]
 
 == Next steps
 
