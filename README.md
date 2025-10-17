@@ -76,3 +76,64 @@ The `convert-adoc.js` script accepts the following:
 
 - **Input file**: AsciiDoc file to convert (required)
 - **Output**: Automatically generates HTML file in the `output/` directory
+
+## How to add a new Sample Application
+
+To add a new sample application or update an existing one, follow these steps:
+
+### Step 1: Create AsciiDoc File and Assets
+
+1. **Create a new AsciiDoc file** in the root directory following the naming convention `[app-name].adoc` (e.g., `fraud-detection.adoc`)
+
+2. **Add image assets** to the `assets/` directory:
+   - Use descriptive filenames that match your application
+   - Supported formats: `.png`, `.jpg`, `.jpeg`, `.gif`
+   - Reference images in your AsciiDoc using: `image::filename.ext[]`
+
+3. **Structure your AsciiDoc** with the following sections:
+   - `== Overview` - Brief description of the application
+   - `== Graph model` - Explanation of the data model
+   - `== Next steps` - Links to further resources and exploration
+
+### Step 2: Update manifest.json
+
+Add a reference to your new AsciiDoc file and assets in the `manifest.json` file in the [console-guides repository](https://github.com/neo4j/console-guides/blob/main/manifest.json#L236):
+
+```json
+{
+  "<name-of-app>": {
+    "url": "https://raw.githubusercontent.com/neo4j-product-examples/sample-applications/refs/heads/main/<name-of-app>.adoc",
+    "imgBaseUrl": "https://raw.githubusercontent.com/neo4j-product-examples/sample-applications/refs/heads/main/assets"
+  }
+}
+```
+
+### Step 3: Update demo-datasets.adoc
+
+Update the playlist in the [demo-datasets.adoc file](https://github.com/neo4j/console-guides/blob/main/demo-datasets.adoc) by adding:
+
+1. **Title** - Add your sample app title after `==`
+2. **Details** - Add description below the title
+3. **Database ID** - Add the `guide=` parameter with your app's database ID
+4. **label** - Add your sample app key as specified above `<name-of-app>`
+5. **Icon** - Add your app icon inside the directory `assets/`
+
+Example entry:
+```asciidoc
+[guide="<database-id>",label="<name-of-app>",iconDefault="assets/app-icon.png"]
+== Your Sample App Title
+
+Brief description of what your sample app does and demonstrates
+  
+```
+
+### Step 4: Test Your Changes (optional)
+
+1. **Convert your AsciiDoc** to HTML to verify formatting:
+   ```bash
+   npm run convert your-app-name.adoc
+   ```
+
+2. **Check the output** in the `output/` directory to ensure images and formatting are correct
+
+3. **Validate links** and ensure all referenced assets exist
