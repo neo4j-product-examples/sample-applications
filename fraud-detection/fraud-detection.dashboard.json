@@ -1,0 +1,166 @@
+{
+  "version": 2,
+  "title": "Customer Transaction Analytics",
+  "description": "",
+  "pages": [
+    {
+      "version": 1,
+      "title": "Overview",
+      "widgets": [
+        {
+          "version": 1,
+          "title": "Customer Fraud Flag Distribution",
+          "w": 6,
+          "h": 4,
+          "x": 0,
+          "y": 2,
+          "meta": {},
+          "settings": {
+            "type": "pie",
+            "query": "MATCH (c:Customer) RETURN c.fraudFlag AS FraudFlag, count(c) AS CustomerCount ORDER BY CustomerCount DESC",
+            "databaseName": "neo4j",
+            "version": 1,
+            "showLegend": "auto",
+            "enableDownloadImage": true
+          }
+        },
+        {
+          "version": 1,
+          "title": "Total Number of Customers",
+          "w": 3,
+          "h": 2,
+          "x": 0,
+          "y": 0,
+          "meta": {},
+          "settings": {
+            "type": "singleValue",
+            "query": "MATCH (c:Customer) RETURN count(c) AS TotalCustomers",
+            "databaseName": "neo4j",
+            "version": 1,
+            "fontSize": null,
+            "textColor": null,
+            "align": 4
+          }
+        },
+        {
+          "version": 1,
+          "title": "Total Number of Transactions",
+          "w": 3,
+          "h": 2,
+          "x": 3,
+          "y": 0,
+          "meta": {},
+          "settings": {
+            "type": "singleValue",
+            "query": "MATCH (t:Transaction) RETURN count(t) AS TotalTransactions",
+            "databaseName": "neo4j",
+            "version": 1,
+            "fontSize": null,
+            "textColor": null,
+            "align": 4
+          }
+        },
+        {
+          "version": 1,
+          "title": "Average Transaction Amount",
+          "w": 3,
+          "h": 2,
+          "x": 6,
+          "y": 0,
+          "meta": {},
+          "settings": {
+            "type": "singleValue",
+            "query": "MATCH (t:Transaction) RETURN avg(t.amount) AS AvgTransactionAmount",
+            "databaseName": "neo4j",
+            "version": 1,
+            "fontSize": null,
+            "textColor": null,
+            "align": 4
+          }
+        },
+        {
+          "version": 1,
+          "title": "Customers with Shared Identifiers Network",
+          "w": 6,
+          "h": 4,
+          "x": 0,
+          "y": 10,
+          "meta": {},
+          "settings": {
+            "type": "graph",
+            "query": "MATCH (c1:Customer)-[s:SHARED_IDENTIFIERS]-(c2:Customer) RETURN c1, s, c2 LIMIT 100",
+            "databaseName": "neo4j",
+            "version": 2,
+            "enableSidePanel": true,
+            "enableContextMenu": true,
+            "layout": {
+              "type": "d3Force"
+            },
+            "enableDownloadImage": true
+          }
+        },
+        {
+          "version": 1,
+          "title": "Monthly Transaction Volume Trend",
+          "w": 12,
+          "h": 4,
+          "x": 0,
+          "y": 6,
+          "meta": {},
+          "settings": {
+            "type": "line",
+            "query": "MATCH (t:Transaction) RETURN date({year: t.date.year, month: t.date.month, day: 1}) AS Month, count(t) AS TransactionCount ORDER BY Month",
+            "databaseName": "neo4j",
+            "valueKeys": [],
+            "orientation": "vertical",
+            "scaleType": "linear",
+            "showLegend": "auto",
+            "showDataZoom": "auto",
+            "version": 1,
+            "enableDownloadImage": true
+          }
+        },
+        {
+          "version": 1,
+          "title": "Transaction Count by Type",
+          "w": 6,
+          "h": 4,
+          "x": 6,
+          "y": 2,
+          "meta": {},
+          "settings": {
+            "type": "bar",
+            "query": "MATCH (t:Transaction) RETURN t.type AS TransactionType, count(t) AS Count ORDER BY Count DESC",
+            "databaseName": "neo4j",
+            "valueKeys": [],
+            "orientation": "vertical",
+            "scaleType": "linear",
+            "showLegend": "auto",
+            "showDataZoom": "auto",
+            "version": 1,
+            "barArrangement": "grouped",
+            "enableDownloadImage": true
+          }
+        },
+        {
+          "version": 1,
+          "title": "Top 10 Customers by Total Transaction Amount",
+          "w": 6,
+          "h": 4,
+          "x": 6,
+          "y": 10,
+          "meta": {},
+          "settings": {
+            "type": "table",
+            "query": "MATCH (c:Customer)-[:HAS_ACCOUNT]->(a:Account) MATCH (a)-[r:SENT|RECEIVED]->(t:Transaction) RETURN c.name AS CustomerName, SUM(t.amount) AS TotalAmount ORDER BY TotalAmount DESC LIMIT 10",
+            "databaseName": "neo4j",
+            "version": 1,
+            "richRenderCells": false,
+            "enableRecordsDownload": true
+          }
+        }
+      ]
+    }
+  ],
+  "params": []
+}
