@@ -1,0 +1,33 @@
+== Overview
+
+Supply chain disruption is a growing challenge that costs organizations billions of dollars each year through delays, shortages, compliance failures, and lost revenue. Traditional supply chain systems are fragmented across ERPs, logistics platforms, supplier portals, and spreadsheets, making it difficult to understand end-to-end dependencies or quickly assess risk.
+
+With relational databases, answering even simple questions—such as “Which finished products are affected if this supplier fails?”—requires complex joins across siloed tables. As supply chains scale in size and complexity, these queries become increasingly brittle, slow, and difficult to maintain.
+
+Neo4j enables a graph-native approach to supply chain visibility and resilience. By modeling suppliers, parts, products, facilities, and shipments as connected entities, organizations can rapidly trace dependencies, identify hidden bottlenecks, and analyze the downstream impact of disruptions. Graph algorithms make it possible to uncover critical paths, concentration risk, alternative sourcing options, and systemic vulnerabilities—delivering faster, more accurate insights for operational and strategic decision-making.
+
+image::fraud-detection-overview.jpg[]
+
+== Graph model
+
+The graph model contains the following:
+
+* *Supplier* – an organization that provides raw materials or APIs used in drug manufacturing.
+* *RawMaterial (RM)* – base substances required for initial formulation.
+* *API* – active pharmaceutical ingredients that provide the therapeutic effect.
+* *ProductStage* – manufacturing stages a product passes through (BULK, DP, FINISHED).
+* *Batch* – a traceable unit of material or product tracked across all stages.
+* *Equipment* – machines and production lines used during manufacturing steps.
+* *Distributor* – an entity responsible for delivering finished drug products to healthcare providers.
+
+image::fraud-detection-graph-model.png[]
+
+== Next steps
+
+Now that you have seen how Neo4j can be used to model and analyze end-to-end supply chains, you may want to explore further
+
+* Load your own data into the same graph data model and run the same queries from this demo. Load the dump https://github.com/neo4j-product-examples/demo-supply_chain/tree/main/dump to your AuraDB instance.
+* Explore additional supply chain risk patterns:
+* Production dependencies on single suppliers or critical components
+* Bottlenecks or delays across high-risk routes, regions, or facilities
+* https://neo4j.com/use-cases/supply-chain-management[Read more] about why Neo4j is a great database on which to optimize supply chain network
