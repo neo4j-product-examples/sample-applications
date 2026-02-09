@@ -8,19 +8,6 @@ Neo4j enables a graph-native approach to supply chain visibility and resilience.
 
 image::fraud-detection-overview.jpg[]
 
-== Graph model
-
-The graph model contains the following:
-
-* *Supplier* – an organization that provides raw materials or APIs used in drug manufacturing.
-* *RawMaterial (RM)* – base substances required for initial formulation.
-* *API* – active pharmaceutical ingredients that provide the therapeutic effect.
-* *ProductStage* – manufacturing stages a product passes through (BULK, DP, FINISHED).
-* *Batch* – a traceable unit of material or product tracked across all stages.
-* *Equipment* – machines and production lines used during manufacturing steps.
-* *Distributor* – an entity responsible for delivering finished drug products to healthcare providers.
-
-image::fraud-detection-graph-model.png[]
 
 == Next steps
 
