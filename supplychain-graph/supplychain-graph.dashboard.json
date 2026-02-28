@@ -35,9 +35,7 @@
             "query": "\n\nMATCH (p:Product)-[db:DISTRIBUTED_BY]->(d:Distributor)\nWHERE p.globalBrand=$globalbrand\n AND p.form = $form\n AND p.materialType='DIST'\n AND p.strength = $strength\n AND p.generation = $generation\n AND d.market = $market\nRETURN d.location as distributor , d.iso3Code as country   , sum(db.demandQty) as demandQty ORDER BY demandQty ASC, country, distributor\n",
             "databaseName": "neo4j",
             "dimensionKey": "distributor",
-            "valueKeys": [
-              "demandQty"
-            ],
+            "valueKeys": ["demandQty"],
             "orientation": "horizontal",
             "scaleType": "linear",
             "showLegend": true,
@@ -345,10 +343,7 @@
             "type": "bar",
             "query": "MATCH (d:Distributor)<-[db:DISTRIBUTED_BY]-\n\t\t(prod:Product WHERE prod.productSKU = $productSKU)\n\t<-[pf1:PRODUCT_FLOW WHERE pf1.globalBrand=prod.globalBrand \n\t\t\t\t\tAND pf1.strength=prod.strength\n\t\t\t\t\tAND pf1.form=prod.form\n\t\t\t\t\tAND pf1.generation=prod.generation\n\t\t\t\t\tAND pf1.market=d.market\n\t\t]-+(api:API|DP)\n\t<-[pf2:PRODUCT_FLOW WHERE pf2.globalBrand=prod.globalBrand\n\t\t\t\t\tAND pf2.strength=prod.strength\n\t\t\t\t\tAND pf2.form=prod.form\n\t\t\t\t\tAND pf2.generation=prod.generation]-+(rm:RM)\t\t\nWITH d, db.demandQty as demandQty, db, prod, collect(distinct rm) as RMList\nUNWIND RMList as curRM\nMATCH p=shortestPath((prod)<-[pf1:PRODUCT_FLOW* ]-(curRM))\nMATCH p3=(myProd:Product)<-[pf:PRODUCT_FLOW \n\t\t\t\tWHERE pf.globalBrand=prod.globalBrand\n\t\t\t\t\tAND pf.strength=prod.strength\n\t\t\t\t\tAND pf.form=prod.form\n\t\t\t\t\tAND pf.generation=prod.generation\n\t\t\t\t\tAND pf.market=d.market\n\t\t]-(curRM)<-[:SUPPLIES_RM]-(sup:Suppliers)\nRETURN sup.companyName as supplierName\n    , curRM.productSKU as rawMaterialSKU \n\t, apoc.coll.disjunction([\"Product\"],labels(myProd))[0] as usedBy\n\t, demandQty\n \t, reduce(rmQty=demandQty,rel in relationships(p) |\n \t\t\t\t\ttoInteger(round(rmQty/(coalesce(rel.conversionRatio,1.0)),0))\n              ) as rawMaterialQty\nORDER BY usedBy, supplierName, rawMaterialSKU\n",
             "databaseName": "neo4j",
-            "valueKeys": [
-              "demandQty",
-              "rawMaterialQty"
-            ],
+            "valueKeys": ["demandQty", "rawMaterialQty"],
             "orientation": "horizontal",
             "scaleType": "linear",
             "showLegend": true,
@@ -495,9 +490,7 @@
             "query": "MATCH (b1:Batch WHERE b1.globalBrand = $globalbrand\n\t\t\t   AND b1.form = $form\n\t\t\t   AND b1.strength = $strength\n\t\t\t   AND b1.generation = $generation)\n\t\t-[bf:BATCH_FLOW WHERE bf.market = $market\n\t\t\t\t\t   AND bf.globalBrand= $globalbrand\n\t\t\t\t\t   AND bf.strength = $strength\n\t\t\t\t\t   AND bf.form = $form\n\t\t\t\t\t   AND bf.generation = $generation]->\n\t\t(b2:Batch WHERE b2.globalBrand= $globalbrand\n\t\t\t       AND b2.form = $form\n\t\t\t       AND b2.strength = $strength\n\t\t\t       AND b2.generation = $generation\n\t\t\t       AND b2.package = b1.package)\n    , (b1)-[:IS_BATCH_FOR]->(p1:Product)<-[:PRODUCES]-(ps1:ProcessStep)\n    \t\t-[:IS_STEP_IN]-(st1:ProcessStage WHERE st1.processStage=$processStage)\n    , (b2)-[:IS_BATCH_FOR]->(p2:Product)<-[:PRODUCES]-(ps2:ProcessStep)\n    \t\t-[:IS_STEP_IN]-(st2:ProcessStage)\nWITH st1, ps1, st2, ps2, b1, b2, b1.lotNumber as lotNumber\n   , duration.inDays(b1.dateProduced,b2.dateProduced).days as numDays\n   , (CASE \n\t\tWHEN b1.location<>b2.location THEN 3\n\t\tWHEN elementId(st1)=elementId(st2) THEN 1\n\t\tELSE 2\n\t\tEND) as targetNumDays\nWITH st1, ps1, st2, ps2, b1, b2, lotNumber, numDays, targetNumDays, numDays-targetNumDays as daysOverTarget\nWITH lotNumber, st1, ps1\n\t, sum(numDays) as sumLotDays\n\t, sum(targetNumDays) as sumLotTarget\n\t, sum(daysOverTarget) as sumLotOverTarget\nWITH st1, ps1\n//\t, round(avg(sumLotDays),1) as days_avg\n//\t, round(avg(sumLotTarget),1) as target_avg\n\t, round(avg(sumLotOverTarget),1) as overTarget_avg\n\t, round(percentileCont(sumLotDays,0.75),1) as days_75pct\n//\t, round(percentileCont(sumLotOverTarget,0.75),1) as overTarget_75pct\n//RETURN (CASE \n//\t\tWHEN ps1.processStage=ps2.processStage THEN \"(\"+ps1.materialType+\") \"+ps1.processStage+\": \"+ps1.processStep+\" -> \"+ps2.processStep\n//\t\tELSE \"(\"+ps1.materialType+\") \"+ps1.processStage+\" -> \"+ps2.processStage\n//\t\tEND) as processing\n//\t, target_avg, days_avg, days_75pct, overTarget_avg, overTarget_75pct\n//ORDER BY overTarget_75pct DESC\nRETURN ps1.processStep as processStep, overTarget_avg, days_75pct\nORDER BY ps1.stageNum, ps1.stepNum\n;\n\n\n\n",
             "databaseName": "neo4j",
             "dimensionKey": "processStep",
-            "valueKeys": [
-              "overTarget_avg"
-            ],
+            "valueKeys": ["overTarget_avg"],
             "orientation": "vertical",
             "scaleType": "linear",
             "showLegend": false,
@@ -934,5 +927,6 @@
       "type": "string",
       "initialValue": "2022073002062101"
     }
-  ]
+  ],
+  "demoId": "0a7119f8-226d-4442-a03c-6885a9f6eec2"
 }
